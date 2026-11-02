@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Generated renders and preview artifacts
+out/
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local environment and editor files
+.env
+.env.*
+!.env.example
+.DS_Store

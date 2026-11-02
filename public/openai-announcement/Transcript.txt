@@ -1,0 +1,81 @@
+Remember when we used AI to substitute every difficult task?
+
+You'd ask, why did I put that in the past tense?
+
+Well, because we've been served this illusion of abundant intelligence.
+
+Intelligence that could do practically everything for us.
+
+And all of that... for just two thousand rupees a month?
+
+Well, OpenAI just made an announcement that should make every heavy AI user pay attention.
+
+ChatGPT and Codex are moving towards a shared usage allowance. Just like Claude.
+
+Your conversations with ChatGPT's reasoning models and your coding sessions with Codex will now draw from the same pool.
+
+So, say goodbye to casually using High or Extra High thinking whenever you feel like it.
+
+But here's what I find much more interesting.
+
+For years, we've been given this illusion that AI intelligence is cheap.
+
+But intelligence has a cost.
+
+Every reasoning step. Every tool call. Every agent that spends twenty minutes trying to find a bug.
+
+All of that consumes compute.
+
+And that compute costs money.
+
+For a long time, companies have been absorbing those costs while competing to make their products more capable and accessible.
+
+But eventually, those costs have to be accounted for somewhere.
+
+And this is why I think we're getting closer to the AI bubble bursting.
+
+They're saying Instant usage will remain unlimited.
+
+And my question is...
+
+For how long?
+
+Think about it.
+
+If even advanced reasoning is something we're now being asked to budget, how long can the promise of abundant, cheap intelligence really last?
+
+But you know what?
+
+I actually see a silver lining here.
+
+Maybe having these limits will make us more involved in the process again.
+
+Maybe we'll actually debug things ourselves instead of blindly telling AI to try again.
+
+You know, use that IQ that's been sitting lonely in a corner.
+
+And you remember that little dopamine buzz in your skull when you were actually involved in solving something?
+
+That flow state?
+
+When you're so involved in figuring something out that you almost forget about everything else?
+
+That's something I think we've been slowly giving up by outsourcing every difficult task to AI.
+
+Yes, workflows might start taking longer.
+
+And maybe we won't hear "AI can do it for cheaper" quite as casually anymore.
+
+Expertise will matter again.
+
+Understanding what you're building will matter.
+
+And so will taking ownership of the work instead of just taking credit for the output.
+
+Because AI was supposed to make us more capable.
+
+Not make us incapable without it.
+
+Signing off,
+
+Abhijeet Singh.

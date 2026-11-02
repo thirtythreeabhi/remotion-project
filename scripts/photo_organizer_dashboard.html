@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Camera Library — Photo Organizer</title>
+  <style>
+    :root {
+      --ink: #1d2824;
+      --muted: #7b8781;
+      --line: #e4e8e3;
+      --paper: #f5f7f3;
+      --card: #ffffff;
+      --green: #264d3c;
+      --green-soft: #e8f0e9;
+      --lime: #c8e886;
+      --amber: #d18a4d;
+      --shadow: 0 12px 32px rgba(30, 48, 39, .06);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: -.01em;
+    }
+    button, input { font: inherit; }
+    .shell { max-width: 1440px; margin: 0 auto; padding: 34px 38px 64px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 34px; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: -.03em; }
+    .brand-mark { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: var(--green); color: var(--lime); font-size: 18px; }
+    .local-pill { display: inline-flex; align-items: center; gap: 8px; padding: 9px 13px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: #53625a; font-size: 12px; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
+    .pulse { width: 7px; height: 7px; border-radius: 50%; background: #55a36c; box-shadow: 0 0 0 4px rgba(85, 163, 108, .13); }
+    .pulse.off { background: var(--amber); box-shadow: 0 0 0 4px rgba(209, 138, 77, .12); }
+    .intro { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 26px; }
+    .eyebrow { color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 8px 0 0; font-size: clamp(32px, 4vw, 52px); line-height: 1.04; letter-spacing: -.06em; font-weight: 650; }
+    .intro p { max-width: 390px; margin: 0 0 3px; color: var(--muted); line-height: 1.55; font-size: 14px; }
+    .overview { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(280px, .8fr); gap: 16px; margin-bottom: 42px; }
+    .progress-card, .model-card { border: 1px solid var(--line); border-radius: 18px; background: var(--card); box-shadow: var(--shadow); }
+    .progress-card { padding: 27px 30px 25px; }
+    .progress-head { display: flex; justify-content: space-between; align-items: start; gap: 20px; }
+    .progress-head h2 { margin: 0; font-size: 14px; font-weight: 650; }
+    .count { margin-top: 15px; display: flex; align-items: baseline; gap: 9px; }
+    .count strong { font-size: 44px; line-height: 1; letter-spacing: -.06em; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .count span { color: var(--muted); font-size: 14px; }
+    .percentage { color: var(--green); font-size: 14px; font-weight: 700; padding: 7px 10px; border-radius: 9px; background: var(--green-soft); }
+    .bar { height: 9px; margin-top: 22px; border-radius: 99px; background: #edf0ec; overflow: hidden; }
+    .bar-fill { height: 100%; width: 0; background: linear-gradient(90deg, #4c8063, #9fc77d); border-radius: inherit; transition: width .5s ease; }
+    .progress-foot { display: flex; justify-content: space-between; gap: 16px; margin-top: 13px; color: var(--muted); font-size: 12px; }
+    .model-card { display: flex; flex-direction: column; justify-content: space-between; padding: 23px; background: var(--green); color: white; }
+    .model-card .eyebrow { color: #b4c8bb; }
+    .model-name { margin-top: 10px; font-size: 20px; font-weight: 650; letter-spacing: -.04em; }
+    .model-detail { margin-top: 7px; color: #c6d4cb; font-size: 12px; }
+    .meta-chips { display: flex; gap: 7px; margin-top: 23px; }
+    .meta-chips span { padding: 7px 9px; border: 1px solid rgba(255,255,255,.2); border-radius: 8px; color: #dce7df; font-size: 11px; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 18px; margin-bottom: 17px; }
+    .section-head h2 { margin: 4px 0 0; font-size: 22px; letter-spacing: -.045em; }
+    .section-head p { margin: 0; color: var(--muted); font-size: 12px; }
+    .tools { display: flex; align-items: center; gap: 10px; margin-bottom: 17px; }
+    .search { position: relative; flex: 1; max-width: 430px; }
+    .search input { width: 100%; border: 1px solid var(--line); outline: none; border-radius: 10px; background: white; padding: 11px 13px 11px 38px; color: var(--ink); font-size: 13px; }
+    .search input:focus { border-color: #8cad95; box-shadow: 0 0 0 3px rgba(76, 128, 99, .1); }
+    .search-icon { position: absolute; top: 50%; left: 13px; transform: translateY(-50%); color: #89958d; font-size: 16px; }
+    .refresh-label { color: var(--muted); font-size: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+    .photo-card { cursor: pointer; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: white; box-shadow: 0 5px 18px rgba(30, 48, 39, .035); transition: transform .18s ease, box-shadow .18s ease; }
+    .photo-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+    .thumb-wrap { position: relative; aspect-ratio: 1.38; background: #e8ece7; overflow: hidden; }
+    .thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .thumb-placeholder { width: 100%; height: 100%; display: grid; place-items: center; color: #86948a; font-size: 26px; }
+    .date-badge { position: absolute; left: 10px; bottom: 10px; padding: 5px 8px; border-radius: 7px; background: rgba(28, 41, 34, .77); color: white; font-size: 10px; backdrop-filter: blur(5px); }
+    .photo-info { padding: 13px 14px 14px; }
+    .photo-info h3 { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 650; letter-spacing: -.02em; }
+    .photo-info p { min-height: 33px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin: 7px 0 11px; color: #69756e; font-size: 11px; line-height: 1.5; }
+    .tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 7px; border-radius: 6px; background: #f0f3ef; color: #5e6c63; font-size: 10px; }
+    .empty { grid-column: 1 / -1; padding: 56px 20px; border: 1px dashed #d6ddd7; border-radius: 14px; text-align: center; color: var(--muted); }
+    .empty strong { display: block; margin-bottom: 7px; color: var(--ink); font-size: 15px; }
+    .footer { display: flex; justify-content: space-between; gap: 20px; padding-top: 22px; margin-top: 30px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+    .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 22px; background: rgba(19, 28, 23, .62); z-index: 10; }
+    .modal.open { display: flex; }
+    .modal-panel { width: min(960px, 100%); max-height: 92vh; overflow: auto; border-radius: 18px; background: white; box-shadow: 0 25px 90px rgba(0,0,0,.25); }
+    .modal-image { width: 100%; max-height: 62vh; display: block; object-fit: contain; background: #e8ece7; }
+    .modal-copy { padding: 22px 25px 26px; }
+    .modal-copy h2 { margin: 5px 0 8px; font-size: 25px; letter-spacing: -.05em; }
+    .modal-copy p { max-width: 720px; color: #66736b; line-height: 1.6; font-size: 14px; }
+    .close { float: right; border: 0; border-radius: 8px; padding: 7px 10px; background: #f0f3ef; color: #56635b; cursor: pointer; }
+    @media (max-width: 980px) { .grid { grid-template-columns: repeat(3, minmax(0,1fr)); } .overview { grid-template-columns: 1.4fr .8fr; } }
+    @media (max-width: 700px) { .shell { padding: 22px 16px 42px; } .intro { display: block; } .intro p { margin-top: 14px; } .overview { grid-template-columns: 1fr; } .grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; } .progress-card { padding: 21px; } .model-card { min-height: 170px; } .section-head { align-items: start; flex-direction: column; } .footer { flex-direction: column; } }
+    @media (max-width: 420px) { .grid { grid-template-columns: 1fr; } .tools { align-items: start; flex-direction: column; } .search { max-width: none; width: 100%; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">◉</div><span>Camera Library</span></div>
+      <div class="local-pill"><span id="pulse" class="pulse"></span><span id="job-label">Connecting</span><span>· Local only</span></div>
+    </header>
+
+    <section class="intro">
+      <div><div class="eyebrow">Phone photo organizer</div><h1>A clearer view<br>of your camera roll.</h1></div>
+      <p>Follow the local captioning job as it adds descriptive filenames, embedded metadata, and sidecar details to your Camera photos.</p>
+    </section>
+
+    <section class="overview">
+      <article class="progress-card">
+        <div class="progress-head"><div><h2>Photo processing</h2><div class="count"><strong id="processed">—</strong><span>of <span id="total">—</span> photos</span></div></div><div class="percentage" id="percent">0%</div></div>
+        <div class="bar"><div class="bar-fill" id="bar-fill"></div></div>
+        <div class="progress-foot"><span id="pending">Waiting for folder details…</span><span>Updated <span id="updated">—</span></span></div>
+      </article>
+      <article class="model-card">
+        <div><div class="eyebrow">Running on this computer</div><div class="model-name" id="model-name">Local vision model</div><div class="model-detail">Image captions generated on the RTX 3060</div></div>
+        <div class="meta-chips"><span>Embedded XMP</span><span>JSON sidecars</span></div>
+      </article>
+    </section>
+
+    <section>
+      <div class="section-head"><div><div class="eyebrow">Live catalog</div><h2>Recently organized</h2></div><p id="shown">Waiting for photos…</p></div>
+      <div class="tools"><label class="search"><span class="search-icon">⌕</span><input id="search" type="search" placeholder="Search titles, captions, or keywords" autocomplete="off"></label><span class="refresh-label">Refreshes every 5 seconds</span></div>
+      <div id="grid" class="grid"><div class="empty"><strong>Connecting to the organizer</strong>The dashboard will fill in as the manifest loads.</div></div>
+    </section>
+
+    <footer class="footer"><span>Read-only dashboard · phone media stays on this PC and phone</span><span>Photos and videos are grouped by capture date · <span id="error"></span></span></footer>
+  </div>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Photo details">
+    <div class="modal-panel"><img id="modal-image" class="modal-image" alt=""><div class="modal-copy"><button class="close" id="close">Close</button><div class="eyebrow" id="modal-file"></div><h2 id="modal-title"></h2><p id="modal-description"></p><div class="tags" id="modal-tags"></div></div></div>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let recent = [];
+    let current = null;
+    const safeText = (node, value) => { node.textContent = value || ''; };
+    function renderCards() {
+      const query = $('search').value.trim().toLowerCase();
+      const matches = recent.filter(item => [item.filename, item.title, item.description, ...(item.keywords || [])].join(' ').toLowerCase().includes(query));
+      const grid = $('grid');
+      grid.replaceChildren();
+      safeText($('shown'), `${matches.length} recent photos shown`);
+      if (!matches.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.innerHTML = '<strong>No matching photos</strong>Try a different title or keyword.';
+        grid.append(empty);
+        return;
+      }
+      for (const item of matches) {
+        const card = document.createElement('article');
+        card.className = 'photo-card';
+        const wrap = document.createElement('div');
+        wrap.className = 'thumb-wrap';
+        const img = document.createElement('img');
+        img.loading = 'lazy';
+        img.alt = item.title || 'Organized photo';
+        img.src = item.thumbnail;
+        img.onerror = () => { const place = document.createElement('div'); place.className = 'thumb-placeholder'; place.textContent = '◌'; img.replaceWith(place); };
+        wrap.append(img);
+        const date = document.createElement('span');
+        date.className = 'date-badge';
+        date.textContent = (item.filename || '').slice(0, 10);
+        wrap.append(date);
+        const info = document.createElement('div');
+        info.className = 'photo-info';
+        const title = document.createElement('h3'); title.textContent = item.title || item.filename;
+        const desc = document.createElement('p'); desc.textContent = item.description || 'No caption available.';
+        const tags = document.createElement('div'); tags.className = 'tags';
+        for (const word of (item.keywords || []).slice(0, 5)) { const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = word; tags.append(tag); }
+        info.append(title, desc, tags);
+        card.append(wrap, info);
+        card.addEventListener('click', () => openDetails(item));
+        grid.append(card);
+      }
+    }
+    function openDetails(item) {
+      current = item;
+      $('modal-image').src = item.thumbnail;
+      $('modal-image').alt = item.title || 'Organized photo';
+      safeText($('modal-file'), item.filename);
+      safeText($('modal-title'), item.title);
+      safeText($('modal-description'), item.description);
+      const tags = $('modal-tags'); tags.replaceChildren();
+      for (const word of (item.keywords || [])) { const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = word; tags.append(tag); }
+      $('modal').classList.add('open');
+    }
+    function closeDetails() { $('modal').classList.remove('open'); $('modal-image').src = ''; current = null; }
+    async function refresh() {
+      try {
+        const response = await fetch('/api/status', {cache: 'no-store'});
+        const data = await response.json();
+        if (!data.ok) throw new Error(data.error || 'Organizer state unavailable');
+        const processed = Number(data.processed || 0), total = Number(data.total || 0), percent = Number(data.percent || 0);
+        safeText($('processed'), processed.toLocaleString());
+        safeText($('total'), total.toLocaleString());
+        safeText($('percent'), `${percent}%`);
+        $('bar-fill').style.width = `${Math.min(percent, 100)}%`;
+        let progressNote = `${Number(data.pending || 0).toLocaleString()} photos remaining`;
+        if (data.job === 'preparing') progressNote = 'Waiting for the local model download…';
+        if (data.job === 'sorting') progressNote = `Sorting into year/month folders · ${Number(data.sort_processed || 0).toLocaleString()} of ${Number(data.sort_total || 0).toLocaleString()} media files`;
+        safeText($('pending'), progressNote);
+        safeText($('updated'), data.updated || '—');
+        safeText($('model-name'), data.model || 'Local vision model');
+        safeText($('job-label'), data.job === 'running' ? 'Captioning photos' : data.job === 'sorting' ? 'Sorting by date' : data.job === 'preparing' ? 'Preparing model' : data.job === 'paused' ? 'Paused' : 'Complete');
+        $('pulse').classList.toggle('off', !['running', 'sorting'].includes(data.job));
+        recent = data.recent || [];
+        renderCards();
+        safeText($('error'), data.inventory_error ? 'Phone folder temporarily unavailable' : '');
+      } catch (error) {
+        safeText($('job-label'), 'Reconnecting');
+        $('pulse').classList.add('off');
+        safeText($('pending'), error.message || 'Organizer is unavailable');
+      }
+    }
+    $('search').addEventListener('input', renderCards);
+    $('close').addEventListener('click', closeDetails);
+    $('modal').addEventListener('click', event => { if (event.target === $('modal')) closeDetails(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeDetails(); });
+    refresh();
+    setInterval(refresh, 5000);
+  </script>
+</body>
+</html>
